@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kết Nối - Kết nối nhà cung cấp và khách hàng</title>
+  <style>
+    /* Reset cơ bản */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background: #f5f7fb;
+      color: #111;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* NAVBAR */
+    header {
+      background: #fff;
+      padding: 15px 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 24px;
+      color: #ff9ef2;
+      cursor: default;
+      user-select: none;
+    }
+    nav {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+      font-size: 16px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      user-select: none;
+    }
+    nav a.active,
+    nav a:hover {
+      background-color: #ff9af2;
+      color: white;
+    }
+
+    .btn-primary {
+      background: #ff9ef2;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .btn-primary:hover {
+      background-color: #ff9af2;
+    }
+
+    /* CONTENT CHUNG */
+    main {
+      flex: 1;
+      padding: 40px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* === TRANG CHỦ === */
+    #home {
+      background: linear-gradient(180deg, #eaade3, #eaade3);
+      color: white;
+      text-align: center;
+      padding: 80px 20px;
+      border-radius: 12px;
+    }
+    #home h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+    #home p {
+      font-size: 20px;
+      opacity: 0.85;
+      margin-bottom: 40px;
+    }
+    .search-box {
+      background: white;
+      border-radius: 30px;
+      width: 480px;
+      max-width: 90%;
+      margin: 0 auto;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      color: #666;
+      font-size: 18px;
+    }
+    .search-box input {
+      border: none;
+      outline: none;
+      flex: 1;
+      padding: 8px 10px;
+      font-size: 18px;
+      color: #111;
+    }
+    .search-box i {
+      margin-right: 10px;
+      user-select: none;
+    }
+    .hero-buttons {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .btn-secondary {
+      background: white;
+      color: #ffacdf;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .btn-secondary:hover {
+      background-color: #e0e8ff;
+    }
+    .btn-blue {
+      background: #ffacdf;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .btn-blue:hover {
+      background-color: #ff9ef2;
+    }
+
+    /* === NHÀ CUNG CẤP === */
+    #supplier {
+      display: none;
+    }
+    #supplier h2 {
+      font-size: 32px;
+      margin-bottom: 25px;
+      color: #ff9ef2;
+    }
+    .supplier-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
+      gap: 20px;
+    }
+    .supplier-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      transition: box-shadow 0.3s;
+      cursor: pointer;
+    }
+    .supplier-card:hover {
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .supplier-card h3 {
+      margin-bottom: 10px;
+      color: #98005e;
+    }
+    .supplier-card p {
+      font-size: 14px;
+      color: #000000;
+      line-height: 1.3;
+    }
+
+    /* === GIAO DỊCH === */
+    #transaction {
+      display: none;
+    }
+    #transaction h2 {
+      font-size: 32px;
+      margin-bottom: 25px;
+      color: #f4bbeb;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 16px 20px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      font-size: 15px;
+    }
+    th {
+      background-color: #f4bbeb;
+      color: #98005e;
+      font-weight: 700;
+    }
+    tr:hover {
+      background-color: #f0f5ff;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #f4bbeb;
+      color: white;
+      padding: 50px 60px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 40px;
+      margin-top: auto;
+    }
+    .footer-col {
+      flex: 1;
+      min-width: 220px;
+    }
+    .footer-col h3 {
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+    .footer-col a {
+      color: #ddd;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 8px;
+      transition: color 0.3s;
+    }
+    .footer-col a:hover {
+      color: white;
+    }
+    .footer-bottom {
+      width: 100%;
+      text-align: center;
+      background: #05070d;
+      color: #aaa;
+      padding: 15px;
+      font-size: 14px;
+      margin-top: 20px;
+      user-select: none;
+    }
+    .footer-bottom span {
+      color: #ff4d4d;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        padding: 10px 20px;
+      }
+      main {
+        padding: 20px 25px;
+      }
+      #home h1 {
+        font-size: 32px;
+      }
+      #home p {
+        font-size: 16px;
+      }
+      .search-box {
+        width: 100%;
+      }
+      .hero-buttons {
+        flex-direction: column;
+        gap: 15px;
+      }
+      footer {
+        padding: 40px 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Kết Nối</div>
+    <nav>
+      <a href="#" class="active" data-page="home">Trang chủ</a>
+      <a href="#" data-page="supplier">Nhà cung cấp</a>
+      <a href="#" data-page="transaction">Giao dịch</a>
+    </nav>
+    <button class="btn-primary">+ Đăng yêu cầu</button>
+  </header>
+
+  <main>
+    <!-- Trang chủ -->
+    <section id="home">
+      <h1>Kết Nối Nhà Cung Cấp và Khách Hàng</h1>
+      <p>Tìm kiếm nhà cung cấp uy tín, đăng yêu cầu và quản lý giao dịch dễ dàng</p>
+      <div class="search-box">
+        <i>🔍</i>
+        <input type="text" placeholder="Tìm kiếm nhà cung cấp, dịch vụ..." />
+      </div>
+      <div class="hero-buttons">
+        <button class="btn-secondary">+ Đăng Yêu Cầu</button>
+        <button class="btn-blue">Xem Tất Cả Nhà Cung Cấp</button>
+      </div>
+    </section>
+
+    <!-- Nhà cung cấp -->
+    <section id="supplier">
+      <h2>Danh sách Nhà Cung Cấp</h2>
+      <div class="supplier-list">
+        <div class="supplier-card">
+          <h3>Nhà cung cấp A</h3>
+          <p>Dịch vụ: Thiết bị điện tử, linh kiện</p>
+          <p>Địa chỉ: Hà Nội</p>
+        </div>
+        <div class="supplier-card">
+          <h3>Nhà cung cấp B</h3>
+          <p>Dịch vụ: Vật liệu xây dựng</p>
+          <p>Địa chỉ: TP. Hồ Chí Minh</p>
+        </div>
+        <div class="supplier-card">
+          <h3>Nhà cung cấp C</h3>
+          <p>Dịch vụ: Dịch vụ vận chuyển</p>
+          <p>Địa chỉ: Đà Nẵng</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Giao dịch -->
+    <section id="transaction">
+      <h2>Quản lý Giao dịch</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Mã giao dịch</th>
+            <th>Nhà cung cấp</th>
+            <th>Khách hàng</th>
+            <th>Trạng thái</th>
+            <th>Ngày</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GD001</td>
+            <td>Nhà cung cấp A</td>
+            <td>Khách hàng X</td>
+            <td>Đang xử lý</td>
+            <td>20/10/2025</td>
+          </tr>
+          <tr>
+            <td>GD002</td>
+            <td>Nhà cung cấp B</td>
+            <td>Khách hàng Y</td>
+            <td>Hoàn thành</td>
+            <td>18/10/2025</td>
+          </tr>
+          <tr>
+            <td>GD003</td>
+            <td>Nhà cung cấp C</td>
+            <td>Khách hàng Z</td>
+            <td>Chờ xác nhận</td>
+            <td>19/10/2025</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-col">
+      <h3>Kết Nối</h3>
+      <p>Nền tảng kết nối uy tín giữa nhà cung cấp và khách hàng tại Việt Nam</p>
+      <p>© 2025 Kết Nối. Tất cả quyền được bảo lưu.</p>
+    </div>
+    <div class="footer-col">
+      <h3>Liên kết nhanh</h3>
+      <a href="#" data-page="home">Trang chủ</a>
+      <a href="#" data-page="supplier">Nhà cung cấp</a>
+      <a href="#" data-page="transaction">Giao dịch</a>
+      <a href="#">Về chúng tôi</a>
+      <a href="#">Liên hệ</a>
+    </div>
+    <div class="footer-col">
+      <h3>Liên hệ</h3>
+      <p>Email: mphuong298@gmail.com</p>
+      <p>Hotline: 0976792428</p>
+      <p>Địa chỉ: Hà Nội, Việt Nam</p>
+    </div>
+  </footer>
+  <div class="footer-bottom">
+    Xây dựng với <span>❤</span> dành cho cộng đồng doanh nghiệp Việt Nam
+  </div>
+
+  <script>
+    // Chuyển trang trong SPA đơn giản
+    const navLinks = document.querySelectorAll("nav a");
+    const sections = {
+      home: document.getElementById("home"),
+      supplier: document.getElementById("supplier"),
+      transaction: document.getElementById("transaction"),
+    };
+
+    function showPage(page) {
+      // Ẩn tất cả section
+      Object.values(sections).forEach((sec) => (sec.style.display = "none"));
+      // Hiện section được chọn
+      if (sections[page]) sections[page].style.display = "block";
+
+      // Thay đổi active navbar
+      navLinks.forEach((link) => {
+        link.classList.toggle("active", link.dataset.page === page);
+      });
+    }
+
+    navLinks.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const page = link.dataset.page;
+        showPage(page);
+      });
+    });
+
+    // Mặc định hiện trang chủ
+    showPage("home");
+
+    // Nút đăng yêu cầu ở navbar và trang chủ
+    document.querySelectorAll(".btn-primary, .btn-secondary").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        alert("Chức năng đăng yêu cầu đang được phát triển!");
+      });
+    });
+
+    // Tìm kiếm trang chủ
+    document.querySelector("#home .search-box input").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const val = e.target.value.trim();
+        if (val) alert("Đang tìm kiếm: " + val);
+      }
+    });
+  </script>
+</body>
+</html>
